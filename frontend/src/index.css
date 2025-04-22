@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth Theme Transition */
+* {
+  transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+}
