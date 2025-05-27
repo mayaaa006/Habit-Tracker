@@ -122,9 +122,7 @@ const completeHabit = asyncHandler(async (req, res) => {
       throw new Error('Not authorized');
     }
 
-    console.log("Request body:", req.body);
     const requestCount = req.body.count || 1;
-    console.log("Request count:", requestCount);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);

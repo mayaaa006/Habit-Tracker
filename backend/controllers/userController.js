@@ -16,8 +16,6 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    console.log('Registration attempt:', { name, email }); // Log the attempt
-
     // Check if required fields are provided
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
