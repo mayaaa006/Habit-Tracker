@@ -3,8 +3,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User'); // Changed from userModel to User
 
 const protect = async (req, res, next) => {
-  console.log('Headers received:', req.headers);
-  console.log('Authorization header:', req.headers.authorization);
   let token;
 
   if (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import HabitCard from "../components/HabitCard";
 import { useTheme } from "../context/ThemeContext";
@@ -10,19 +10,34 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('token');
         
+        if (!token) {
+          console.log('No token found, redirecting to login');
+          navigate('/');
+          return;
+        }
+        
         const response = await fetch('http://localhost:5000/api/users/me', {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
         });
         
         if (!response.ok) {
+          if (response.status === 401) {
+            // Token is invalid or expired
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            navigate('/');
+            return;
+          }
           throw new Error('Failed to fetch user data');
         }
         
@@ -30,7 +45,10 @@ const Dashboard = () => {
         setUser(userData);
       } catch (error) {
         console.error('Error fetching user data:', error);
-        // Don't set error state here to avoid showing error message for user data
+        // If there's an auth error, redirect to login
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/');
       }
     };
 
@@ -38,13 +56,27 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem('token');
         
+        if (!token) {
+          console.log('No token found for habits, redirecting to login');
+          navigate('/');
+          return;
+        }
+        
         const response = await fetch('http://localhost:5000/api/habits', {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
         });
         
         if (!response.ok) {
+          if (response.status === 401) {
+            // Token is invalid or expired
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            navigate('/');
+            return;
+          }
           throw new Error('Failed to fetch habits');
         }
         
@@ -52,16 +84,29 @@ const Dashboard = () => {
         setHabits(data);
       } catch (error) {
         console.error('Error fetching habits:', error);
-        setError('Failed to load your habits. Please try again.');
+        if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+          localStorage.removeItem('token');
+          localStorage.removeUser('user');
+          navigate('/');
+        } else {
+          setError('Failed to load your habits. Please try again.');
+        }
       } finally {
         setLoading(false);
       }
     };
     
+    // Check if user is authenticated before fetching data
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/');
+      return;
+    }
+    
     // Fetch both user data and habits
     fetchUserData();
     fetchHabits();
-  }, []);
+  }, [navigate]);
 
   // Get current time to determine greeting
   const getGreeting = () => {

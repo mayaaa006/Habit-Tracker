@@ -47,7 +47,19 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post('http://localhost:5000/api/users/register', userData);
       
       if (response.data) {
+        // Store both user data and token for signup
         localStorage.setItem('user', JSON.stringify(response.data));
+        
+        // Check if token exists in response and store it
+        if (response.data.token) {
+          localStorage.setItem('token', response.data.token);
+        }
+        
+        // Store token expiration date (optional feature)
+        const tokenExpiry = new Date(new Date().getTime() + 60 * 60 * 1000); // 1 hour from now
+        response.data.tokenExpiry = tokenExpiry;
+        localStorage.setItem('user', JSON.stringify(response.data));
+        
         setUser(response.data);
       }
       
@@ -73,14 +85,16 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post('http://localhost:5000/api/users/login', userData);
       
       if (response.data) {
-        localStorage.setItem('user', JSON.stringify(response.data));
-        localStorage.setItem('token', response.data.token);
+        // Store token first
+        if (response.data.token) {
+          localStorage.setItem('token', response.data.token);
+        }
         
         // Store token expiration date (optional feature)
         const tokenExpiry = new Date(new Date().getTime() + 60 * 60 * 1000); // 1 hour from now
         response.data.tokenExpiry = tokenExpiry;
-        localStorage.setItem('user', JSON.stringify(response.data));
         
+        localStorage.setItem('user', JSON.stringify(response.data));
         setUser(response.data);
       }
       
