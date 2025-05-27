@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FiHome, FiPlusCircle, FiMoon, FiSun, FiLogOut, FiTrendingUp, FiClock, FiBell, FiBarChart2 } from "react-icons/fi";
+import { FiHome, FiPlusCircle, FiMoon, FiSun, FiLogOut, FiTrendingUp, FiClock, FiEdit3, FiBarChart2 } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext"; 
 
 
@@ -57,7 +57,7 @@ const Sidebar = ({ setDarkMode, darkMode }) => {
               className="flex items-center px-4 py-2 text-lg font-medium text-purple-900 
               dark:text-white hover:bg-pink-300 dark:hover:bg-purple-700 rounded-md transition-all duration-500"
             >
-              <FiBell className="mr-2" /> Notes
+              <FiEdit3 className="mr-2" /> Notes
             </Link>
           </li>
           <li>
