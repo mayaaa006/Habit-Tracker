@@ -2,7 +2,6 @@ import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-
 // Create the context
 const AuthContext = createContext();
 
@@ -22,12 +21,20 @@ export const AuthProvider = ({ children }) => {
     const checkStoredUser = () => {
       setLoading(true);
       const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+      const token = localStorage.getItem('token');
+      
+      if (storedUser && token) {
+        const parsedUser = JSON.parse(storedUser);
+        // Optional: Check token validity here (e.g., by checking expiry)
+        if (parsedUser.tokenExpiry && new Date(parsedUser.tokenExpiry) < new Date()) {
+          logout(); // Log out if the token is expired
+        } else {
+          setUser(parsedUser);
+        }
       }
       setLoading(false);
     };
-  
+
     checkStoredUser();
   }, []);
 
@@ -69,7 +76,10 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(response.data));
         localStorage.setItem('token', response.data.token);
         
-        const storedToken = localStorage.getItem('token');
+        // Store token expiration date (optional feature)
+        const tokenExpiry = new Date(new Date().getTime() + 60 * 60 * 1000); // 1 hour from now
+        response.data.tokenExpiry = tokenExpiry;
+        localStorage.setItem('user', JSON.stringify(response.data));
         
         setUser(response.data);
       }
@@ -92,11 +102,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-    navigate('/auth');
+    navigate('/');
   };
 
   // Context value
-  const contextValue = {
+  const authContextValue = {
     user,
     isLoading: loading,
     error,
@@ -106,7 +116,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={contextValue}>
+    <AuthContext.Provider value={authContextValue}>
       {children}
     </AuthContext.Provider>
   );

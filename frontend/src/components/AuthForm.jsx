@@ -11,7 +11,6 @@ const AuthForm = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  // Add state for password visibility
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
@@ -63,12 +62,10 @@ const AuthForm = () => {
     }
   };
 
-  // Toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  // Toggle confirm password visibility
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
@@ -163,22 +160,28 @@ const AuthForm = () => {
             </div>
           </div>
         )}
-        <button 
-          type="submit" 
-          className="w-full bg-purple-500 text-white p-2 rounded-md hover:bg-purple-600 transition"
-          disabled={loading}
-        >
-          {loading ? "Processing..." : (isSignup ? "Sign Up" : "Login")}
-        </button>
-        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          {isSignup ? "Already have an account? " : "Don't have an account? "}
-          <span
-            className="text-purple-500 cursor-pointer hover:underline"
-            onClick={() => setIsSignup(!isSignup)}
+        <div className="mb-4">
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full py-2 bg-purple-600  hover:bg-purple-700 transition text-white rounded-lg"
           >
-            {isSignup ? "Login" : "Sign Up"}
-          </span>
-        </p>
+            {loading ? 'Processing...' : isSignup ? 'Sign Up' : 'Login'}
+          </button>
+        </div>
+        <div className="text-center text-sm">
+          {isSignup ? (
+            <p>
+              Already have an account?{' '}
+              <button onClick={() => setIsSignup(false)} className="text-blue-500">Login</button>
+            </p>
+          ) : (
+            <p>
+              Don't have an account?{' '}
+              <button onClick={() => setIsSignup(true)} className="text-blue-500">Sign Up</button>
+            </p>
+          )}
+        </div>
       </form>
     </div>
   );

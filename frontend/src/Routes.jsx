@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AddHabit from "./pages/AddHabit";
@@ -14,7 +15,11 @@ const AppRoutes = () => {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<Auth />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route 
+          path="/auth" 
+          element={<Auth />} 
+        />
         <Route 
           path="/dashboard" 
           element={
