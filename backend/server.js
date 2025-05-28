@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json()); // to parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); 
 app.use(cors({
-  origin: 'http://localhost:5173', // Your frontend URL
+  origin: 'http://localhost:5173', //  frontend URL
   credentials: true,
 }));
 app.use(bodyParser.json());
